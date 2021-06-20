@@ -3,7 +3,6 @@ package br.com.unset.app.resources;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.config.YamlProcessor.ResolutionMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
