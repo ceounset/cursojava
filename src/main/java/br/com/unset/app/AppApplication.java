@@ -1,5 +1,6 @@
 package br.com.unset.app;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,13 +14,20 @@ import br.com.unset.app.domain.Cidade;
 import br.com.unset.app.domain.Cliente;
 import br.com.unset.app.domain.Endereco;
 import br.com.unset.app.domain.Estado;
+import br.com.unset.app.domain.Pagamento;
+import br.com.unset.app.domain.PagamentoComBoleto;
+import br.com.unset.app.domain.PagamentoComCartao;
+import br.com.unset.app.domain.Pedido;
 import br.com.unset.app.domain.Produto;
+import br.com.unset.app.domain.enums.EstadoPagamento;
 import br.com.unset.app.domain.enums.TipoCliente;
 import br.com.unset.app.repositories.CategoriaRepository;
 import br.com.unset.app.repositories.CidadeRepository;
 import br.com.unset.app.repositories.ClienteRepository;
 import br.com.unset.app.repositories.EnderecoRepository;
 import br.com.unset.app.repositories.EstadoRepository;
+import br.com.unset.app.repositories.PagamentoRepository;
+import br.com.unset.app.repositories.PedidoRepository;
 import br.com.unset.app.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -37,6 +45,10 @@ public class AppApplication implements CommandLineRunner {
 	private ClienteRepository clienteRepository;
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(AppApplication.class, args);
@@ -85,6 +97,24 @@ public class AppApplication implements CommandLineRunner {
 
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		enderecoRepository.saveAll(Arrays.asList(endereco1, endereco2));
+
+
+		SimpleDateFormat formatarData = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+		Pedido ped1 = new Pedido(null, formatarData.parse("30/09/2020 10:31"), cli1, endereco1);
+		Pedido ped2 = new Pedido(null, formatarData.parse("10/10/2021 00:21"), cli1, endereco2);
+
+		Pagamento pgto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+		ped1.setPagamento(pgto1);
+
+		Pagamento pgto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, formatarData.parse("15/10/2021 00:00"), null);
+		ped2.setPagamento(pgto2);
+
+		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+
+		pedidoRepository.saveAll(Arrays.asList(ped1, ped2));
+		pagamentoRepository.saveAll(Arrays.asList(pgto1, pgto2));
+		
 	
 	}
 
